@@ -6,17 +6,25 @@ $(document).ready(function () {
 		    var i = 0;
 		    var str = "";
 		    for (; i < data.items.length; i++) {
-		        str = str + data.items[i].html_url + "</br>"
+		        str = str + "<tr><td>" + data.items[i].html_url + "</td><td>31</td><td>32</td><td>33</td></tr>";
 		    }
-		    $("p").html(str);
+		    //add new row at the end of table
+		    $("#infoTable tr:last").after(str);
+		    //modify table row color
+		    $("#infoTable tr:odd").addClass("todd");
+		    $("#infoTable tr:even").addClass("teven");
+		    //$("p").html(str);
 		}
 	);
-    //modify table row color
-    $("#infoTable tr:odd").addClass("todd");
-    $("#infoTable tr:even").addClass("teven");
-    //add new row at the end of table
-    var newRow = "<tr><td>30</td><td>31</td><td>32</td><td>33</td></tr>";
-    $("#infoTable tr:last").after(newRow);
+
+    //parse email from url
+    function getEmailFromURL(url)
+    {
+        $.get(url, function (data) {
+
+        });
+    }
+
 });
 
 
