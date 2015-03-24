@@ -39,6 +39,13 @@ def isContentFromTicketURL(ticketURL, contents):
     else:
         return False
 
+#get next page
+def getNextPageFromURL(url):
+    html = getURLHtmlContent(url)
+    soup = BeautifulSoup(html)
+    tag = soup.find(text=re.compile('上一页')).parent
+    return 'http://bbs.nju.edu.cn/' + tag['href']
+    
 
 if __name__=='__main__':
     main()
