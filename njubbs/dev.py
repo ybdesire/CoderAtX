@@ -6,15 +6,20 @@ import re                       #regular expression
 
 def main():
     board = 'JobAndWork'
-    contents = ['IT']
-    html = getURLHtmlContent('http://bbs.nju.edu.cn/bbsdoc?board={0}&type=doc'.format(board))
-    #displayHTMLAtBrowser(html)
-    soup = BeautifulSoup(html)
-    aTagArr = soup.findAll('a', attrs={'href':re.compile('bbscon')})
-    for element_a in aTagArr:
-        ticketURL = 'http://bbs.nju.edu.cn/' + element_a.get('href')
-        print(ticketURL)
-        isContentFromTicketURL(ticketURL, contents)                
+    contents = ['华为', 'IT']
+    urlHome = 'http://bbs.nju.edu.cn/bbsdoc?board={0}&type=doc'.format(board)
+    COUNT = 10;
+    for i in range(COUNT):
+        print(i)
+        html = getURLHtmlContent(urlHome)
+        urlHome = getNextPageFromURL(urlHome)
+        soup = BeautifulSoup(html)
+        aTagArr = soup.findAll('a', attrs={'href':re.compile('bbscon')})
+        for element_a in aTagArr:
+            ticketURL = 'http://bbs.nju.edu.cn/' + element_a.get('href')
+            if(isContentFromTicketURL(ticketURL, contents)==True):
+                print(ticketURL)
+                print(getCoreContentFromURL(ticketURL))
         
     
     
@@ -31,21 +36,31 @@ def displayHTMLAtBrowser(html):
     webbrowser.open_new_tab('hello.html')
 
 def isContentFromTicketURL(ticketURL, contents):
-    html = getURLHtmlContent(ticketURL)
-    soup = BeautifulSoup(html)
-    if soup.get_text().find(contents[0])!=-1:
-        print(soup.get_text())
-        return True
-    else:
-        return False
+    text = getCoreContentFromURL(ticketURL)
+    for content in contents:
+        if text.find(content)!=-1:
+            return True
+    return False
 
-#get next page
+#get next page's url
 def getNextPageFromURL(url):
     html = getURLHtmlContent(url)
     soup = BeautifulSoup(html)
     tag = soup.find(text=re.compile('上一页')).parent
     return 'http://bbs.nju.edu.cn/' + tag['href']
-    
+
+def getCoreContentFromURL(url):
+    html = getURLHtmlContent(url)
+    soup = BeautifulSoup(html)
+    arr = soup.get_text().split('\n')
+    narr = []
+    for ele in arr:
+        if(ele!='' and ele.startswith(':')==False):
+            if ele=='--':
+                break
+            else:
+                narr.append(ele)
+    return (''.join(narr[4:len(narr)-1]))
 
 if __name__=='__main__':
     main()
