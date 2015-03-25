@@ -6,20 +6,28 @@ import re                       #regular expression
 
 def main():
     board = 'JobAndWork'
-    contents = ['华为', 'IT']
+    contents = ['华为', 'IT', '趋势', 'Trend']
     urlHome = 'http://bbs.nju.edu.cn/bbsdoc?board={0}&type=doc'.format(board)
-    COUNT = 10;
-    for i in range(COUNT):
-        print(i)
-        html = getURLHtmlContent(urlHome)
-        urlHome = getNextPageFromURL(urlHome)
-        soup = BeautifulSoup(html)
-        aTagArr = soup.findAll('a', attrs={'href':re.compile('bbscon')})
-        for element_a in aTagArr:
-            ticketURL = 'http://bbs.nju.edu.cn/' + element_a.get('href')
-            if(isContentFromTicketURL(ticketURL, contents)==True):
-                print(ticketURL)
-                print(getCoreContentFromURL(ticketURL))
+    pageFrom = 10;
+    pageEnd = 500;
+    for i in range(pageEnd):
+        try:
+            print(i)
+            html = getURLHtmlContent(urlHome)
+            urlHome = getNextPageFromURL(urlHome)
+            if(i>pageFrom):
+                soup = BeautifulSoup(html)
+                aTagArr = soup.findAll('a', attrs={'href':re.compile('bbscon')})
+                for element_a in aTagArr:
+                    try:
+                        ticketURL = 'http://bbs.nju.edu.cn/' + element_a.get('href')
+                        if(isContentFromTicketURL(ticketURL, contents)==True):
+                            print(ticketURL)
+                            print(getCoreContentFromURL(ticketURL))
+                    except:
+                        print(" exception")
+        except:
+            print("exception")
         
     
     
@@ -61,6 +69,9 @@ def getCoreContentFromURL(url):
             else:
                 narr.append(ele)
     return (''.join(narr[4:len(narr)-1]))
+
+def test():
+    getURLHtmlContent('http://bbs.nju.edu.cn/bbscon?board=JobAndWork&file=M.1427248873.A&num=11887')
 
 if __name__=='__main__':
     main()
